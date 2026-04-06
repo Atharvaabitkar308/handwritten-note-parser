@@ -20,18 +20,13 @@ function App() {
       setResult(res.data.parsed_text);
       fetchNotes();
     } catch (err) {
-      console.error(err);
       alert("Upload failed");
     }
   };
 
   const fetchNotes = async () => {
-    try {
-      const res = await axios.get("http://127.0.0.1:8000/api/notes");
-      setNotes(res.data);
-    } catch (err) {
-      console.error(err);
-    }
+    const res = await axios.get("http://127.0.0.1:8000/api/notes");
+    setNotes(res.data);
   };
 
   useEffect(() => {
@@ -39,89 +34,97 @@ function App() {
   }, []);
 
   return (
-    <div
-      style={{
-        fontFamily: "Arial",
-        padding: "30px",
-        background: "#f5f5f5",
-        minHeight: "100vh",
-      }}
-    >
-      <h1 style={{ textAlign: "center" }}>
-        📝 Handwritten Note Parser
-      </h1>
+    <div style={styles.container}>
+      <h1 style={styles.title}>✨ Handwritten Note Parser</h1>
 
-      {/* Upload Box */}
-      <div
-        style={{
-          background: "white",
-          padding: "20px",
-          borderRadius: "10px",
-          maxWidth: "500px",
-          margin: "20px auto",
-          textAlign: "center",
-          boxShadow: "0 0 10px rgba(0,0,0,0.1)",
-        }}
-      >
+      {/* Upload Card */}
+      <div style={styles.glassCard}>
         <input
           type="file"
           onChange={(e) => setFile(e.target.files[0])}
+          style={styles.input}
         />
-        <br />
-        <br />
-        <button
-          onClick={handleUpload}
-          style={{
-            padding: "10px 20px",
-            background: "#007bff",
-            color: "white",
-            border: "none",
-            borderRadius: "5px",
-            cursor: "pointer",
-          }}
-        >
-          Upload & Parse
+        <button onClick={handleUpload} style={styles.button}>
+          Upload & Parse 🚀
         </button>
       </div>
 
-      {/* Parsed Text */}
-      {result && (
-        <div
-          style={{
-            background: "white",
-            padding: "20px",
-            borderRadius: "10px",
-            maxWidth: "700px",
-            margin: "20px auto",
-            boxShadow: "0 0 10px rgba(0,0,0,0.1)",
-          }}
-        >
-          <h2>📄 Parsed Text</h2>
-          <pre>{result}</pre>
-        </div>
-      )}
+      {/* Result Section */}
+      <div style={styles.glassCard}>
+        <h2>📄 Parsed Text</h2>
+        <pre style={styles.text}>
+          {result || "Upload an image to see extracted text"}
+        </pre>
+      </div>
 
       {/* History */}
-      <div style={{ maxWidth: "700px", margin: "20px auto" }}>
-        <h2>📚 History</h2>
-        {notes.map((note) => (
-          <div
-            key={note.id}
-            style={{
-              background: "white",
-              padding: "15px",
-              marginBottom: "10px",
-              borderRadius: "8px",
-              boxShadow: "0 0 5px rgba(0,0,0,0.1)",
-            }}
-          >
-            <b>{note.image_path}</b>
-            <p>{note.parsed_text}</p>
-          </div>
-        ))}
+      <div style={styles.glassCard}>
+        <h2>📜 History</h2>
+        {notes.length === 0 ? (
+          <p>No history available</p>
+        ) : (
+          notes.map((note) => (
+            <div key={note.id} style={styles.noteCard}>
+              <p><b>{note.image_path}</b></p>
+              <p>{note.parsed_text}</p>
+            </div>
+          ))
+        )}
       </div>
     </div>
   );
 }
+
+const styles = {
+  container: {
+    fontFamily: "Arial",
+    minHeight: "100vh",
+    padding: "30px",
+    background: "linear-gradient(135deg, #667eea, #764ba2)",
+  },
+
+  title: {
+    textAlign: "center",
+    color: "#fff",
+    marginBottom: "30px",
+  },
+
+  glassCard: {
+    background: "rgba(255, 255, 255, 0.15)",
+    backdropFilter: "blur(10px)",
+    borderRadius: "15px",
+    padding: "20px",
+    marginBottom: "20px",
+    color: "#fff",
+    boxShadow: "0 8px 32px rgba(0,0,0,0.2)",
+  },
+
+  input: {
+    marginBottom: "10px",
+    color: "#fff",
+  },
+
+  button: {
+    background: "#00c6ff",
+    backgroundImage: "linear-gradient(45deg, #00c6ff, #0072ff)",
+    border: "none",
+    padding: "10px 20px",
+    borderRadius: "8px",
+    color: "#fff",
+    cursor: "pointer",
+    fontWeight: "bold",
+  },
+
+  text: {
+    whiteSpace: "pre-wrap",
+  },
+
+  noteCard: {
+    background: "rgba(255,255,255,0.2)",
+    padding: "10px",
+    borderRadius: "10px",
+    marginTop: "10px",
+  },
+};
 
 export default App;
